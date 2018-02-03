@@ -116,6 +116,7 @@ public abstract class ScriptUtils {
 		StringBuilder sb = new StringBuilder();
 		boolean inLiteral = false;
 		boolean inEscape = false;
+		int blockDepth = 0;
 		char[] content = script.toCharArray();
 		for (int i = 0; i < script.length(); i++) {
 			char c = content[i];
@@ -133,7 +134,13 @@ public abstract class ScriptUtils {
 			if (c == '\'') {
 				inLiteral = !inLiteral;
 			}
-			if (!inLiteral) {
+			if (contentMatches(content, i, "BEGIN")) {
+				blockDepth++;
+			}
+			if (contentMatches(content, i, "END")) {
+				blockDepth--;
+			}
+			if (!inLiteral && blockDepth == 0) {
 				if (script.startsWith(separator, i)) {
 					// we've reached the end of the current statement
 					if (sb.length() > 0) {
@@ -183,6 +190,21 @@ public abstract class ScriptUtils {
 		if (StringUtils.isNotEmpty(sb.toString())) {
 			statements.add(sb.toString());
 		}
+	}
+
+	private static boolean contentMatches(char[] content, int offset, String needle) {
+		final char[] needleChars = needle.toCharArray();
+		final int end = offset + needleChars.length;
+		if (content.length < end) {
+			return false;
+		}
+
+		for (int i = 0; i < needleChars.length; i++) {
+			if (Character.toLowerCase(content[offset + i]) != Character.toLowerCase(needleChars[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void checkArgument(boolean expression, String errorMessage) {
