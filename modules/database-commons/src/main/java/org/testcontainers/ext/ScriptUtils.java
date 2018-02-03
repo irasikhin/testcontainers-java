@@ -134,10 +134,10 @@ public abstract class ScriptUtils {
 			if (c == '\'') {
 				inLiteral = !inLiteral;
 			}
-			if (contentMatches(content, i, "BEGIN")) {
+			if (!inLiteral && contentMatches(content, i, "BEGIN")) {
 				blockDepth++;
 			}
-			if (contentMatches(content, i, "END")) {
+			if (!inLiteral && contentMatches(content, i, "END")) {
 				blockDepth--;
 			}
 			if (!inLiteral && blockDepth == 0) {
