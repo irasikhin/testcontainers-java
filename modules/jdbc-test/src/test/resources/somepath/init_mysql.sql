@@ -7,15 +7,27 @@ INSERT INTO bar (foo) VALUES ('hello world');
 DROP PROCEDURE IF EXISTS count_foo;
 
 CREATE PROCEDURE count_foo()
-BEGIN
+  BEGIN
 
-  -- we can do comments
+    BEGIN
+      SELECT *
+      FROM bar;
+      SELECT 1
+      FROM dual;
+    END;
 
-  /* including block
-     comments
-   */
+    BEGIN
+      select * from bar;
+    END;
 
-select * from bar;
-select 1 from dual;
+    -- we can do comments
 
-END;
+    /* including block
+       comments
+     */
+
+    /* what if BEGIN appears inside a comment? */
+
+    select "or what if BEGIN appears inside a literal?";
+
+  END;
